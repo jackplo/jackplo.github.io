@@ -1,4 +1,4 @@
-import { Player } from "./Player.js"
+import { Player } from "./player.js"
 import { Bullet } from "./bullet.js"
 
 export class Enemy extends Player {
