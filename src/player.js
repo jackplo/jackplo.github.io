@@ -17,6 +17,12 @@ export class Player {
         this.mousePoint = new Point(this.base.position.x, this.base.position.y)
         this.lookPath = new Path.Line(this.base.position, this.base.position)
         this.bulletArray = bulletArray
+        
+        this.text = new PointText({
+            point: new Point(this.base.position.x, this.base.position.y),
+            content: this.lives,
+            fillColor: "white"
+        })
     }
     
     accelerate(v) {
@@ -47,6 +53,7 @@ export class Player {
     }
 
     update() {
+        this.healthText()
         this.move()
         this.lookDir()
     }
@@ -58,6 +65,7 @@ export class Player {
 
     death() {
         this.base.remove()
+        this.text.remove()
     }
 
     calculateAngle(point) {
@@ -72,13 +80,20 @@ export class Player {
         return lookVector.angle
     }
 
+    healthText() {
+        this.text.content = this.lives
+        this.text.position.x = this.base.position.x
+        this.text.position.y = this.base.position.y
+    }
+
     rotate(point) {
         this.mousePoint = point
     }
 
     lookDir() {
         this.lookPath.remove()
-        this.lookPath = new Path.Line(this.base.position, this.base.position.add(new Point({angle: this.calculateAngle(this.mousePoint), length: 35})))
+        this.lookPath = new Path.Line(this.base.position, this.base.position.add(new Point({ angle: this.calculateAngle(this.mousePoint), length: 35 })))
+        this.lookPath.sendToBack()
         this.lookPath.strokeColor = this.color
         this.lookPath.strokeWidth = 17.5
     }

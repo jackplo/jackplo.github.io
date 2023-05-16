@@ -1,40 +1,12 @@
+import { Player } from "./Player.js"
 import { Bullet } from "./bullet.js"
 
-export class Enemy {
-    constructor(x, y, color, player, bulletArray) {
-        this.color = color
+export class Enemy extends Player {
+    constructor(x, y, color, bulletArray, player) {
+        super(x, y, color, bulletArray);
+
         this.player = player
-        
-        this.base = Path.Circle({
-            center: [x, y],
-            radius: 25,
-            strokeColor: this.color,
-            fillColor: this.color
-        })
-
-        this.velocity = 0
-        this.bulletVelocity = 5
-        this.bulletArray = bulletArray
-        this.lives = 3
         this.interval = 0
-        this.lookPath = new Path.Line(this.base.position, this.base.position)
-    }
-
-    accelerate(v) {
-        this.velocity += v
-        if (this.velocity > 2) {
-            this.velocity = 2
-        } else if (this.velocity < -2) {
-            this.velocity = -2
-        }
-    }   
-
-    decelerate(v) {
-        if (this.velocity > 0) {
-            this.velocity += v
-        } else if (this.velocity < 0) {
-            this.velocity -= v
-        }
     }
 
     move() {
@@ -58,10 +30,23 @@ export class Enemy {
         this.base.position.y += dir.y
     }
 
+    calculateAngle(player) {
+        let enemyPos = new Point(this.base.position.x, this.base.position.y)
+        let playerPos = new Point(player.base.position.x, player.base.position.y)
+        let lookVector = playerPos.subtract(enemyPos)
+
+        if (lookVector.length < 10) {
+            this.velocity = 0
+        }
+
+        return lookVector.angle
+    }
+
     death() {
         this.base.remove()
         this.lookPath.remove()
         clearInterval(this.interval)
+        this.text.remove()
     }
 
     shoot() {
@@ -69,18 +54,6 @@ export class Enemy {
             let turret_pos = this.base.position.add(new Point({angle: this.calculateAngle(this.player), length: 35}))
             this.bulletArray.push(new Bullet(turret_pos.x, turret_pos.y, 3, this.calculateAngle(this.player), this.color))
         }, 2000)
-    }
-
-    calculateAngle(player) {
-        let enemyPos = new Point(this.base.position.x, this.base.position.y)
-        this.playerPos = new Point(player.base.position.x, player.base.position.y)
-        let lookVector = this.playerPos.subtract(enemyPos)
-
-        if (lookVector.length < 10) {
-            this.velocity = 0
-        }
-
-        return lookVector.angle
     }
 
     pythagorean(playerPos, enemyPos) {
@@ -93,8 +66,10 @@ export class Enemy {
     update() {
         let playerPos = new Point(this.player.base.position)
         let enemyPos = new Point(this.base.position)
+        this.healthText()
         this.lookPath.remove()
-        this.lookPath = new Path.Line(this.base.position, this.base.position.add(new Point({angle: this.calculateAngle(this.player), length: 35})))
+        this.lookPath = new Path.Line(this.base.position, this.base.position.add(new Point({ angle: this.calculateAngle(this.player), length: 35 })))
+        this.lookPath.sendToBack()
         this.lookPath.strokeColor = this.color
         this.lookPath.strokeWidth = 17.5
 

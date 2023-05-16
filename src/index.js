@@ -49,7 +49,6 @@ const itemHitTest = (entityArray, bulletArray, clientHeight, clientWidth) => {
 const start = () => {
     let bulletArray = []
     var player = new Player(centerPoint.x, centerPoint.y, "blue", bulletArray)
-    //var enemy = new Enemy(centerPoint.x + 100, centerPoint.y + 100, "red", player, bulletArray)
     var entityArray = [player]
     
     var spawner = new spawnManager(xMax, yMax, player, entityArray, bulletArray)

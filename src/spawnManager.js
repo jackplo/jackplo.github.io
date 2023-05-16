@@ -15,7 +15,7 @@ export class spawnManager {
         this.interval = setInterval(() => {
             let randomX = Math.floor(Math.random() * (this.xMax + 1))
             let randomY = Math.floor(Math.random() * (this.yMax + 1))
-            let enemy = new Enemy(randomX, randomY, "red", this.player, this.bulletArray)
+            let enemy = new Enemy(randomX, randomY, "red", this.bulletArray, this.player)
             enemy.shoot()
             this.enemyArray.push(enemy)
             this.entityArray.push(enemy)
